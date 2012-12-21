@@ -1,0 +1,42 @@
+AES128
+
+Greetings!
+This is a very easy to understand implementation of the 128bit subset of AES in C. The program does not take input, you have to implement that yourself in the checkInput function. Most example implementations of AES use obscure syntax to quickly perform most complication operations in AES, espcially the mixColumns function. This implementation, while inefficient, implements the math in a much simpler to understand manner. Some knowledge of Galois fields is needed.
+
+How to build:
+To build on Ubuntu make sure you use sudo apt-get install build-dep at command line. 
+
+Type make
+
+You can use either gcc or clang.
+
+The program has two built in tests that were given as examples in the FIPS-197 standard document.
+To run the test on page 33-34
+./aes128 -t1
+To run the test on page 35-36
+./aes128 -t2
+
+MixColumns:
+I won't bother explain the rest of AES. There are plenty of tutorials online for that and FIPS-197. The important part that I have found lacking is on the mixColumns subject. It relies on finite fields to simulate randomness. In the FIPS-197 standard a byte is translated to a series of polynomials. 
+
+Such as 0101 = (0) * x^3 + (1) * x^2 + (0) * x + (1) * 1 = x^(2) + 1
+
+With that series and a series of polynomials from FIPS-197 matrix multiplication is used to get the output. This matrix multiplication is simplified to the formula in chapter 4 & 5 which is simply a series of multiplications and additions. The polynomial function has the property of being irreducible (able to divide by only 1 and itself), this makes it less then 8, useful for bytes. Addition in binary is simply XOR'ing two words according to chapter 4; the same is with subtraction in binary. The reason behind this based on modulus of 2. Multiplication is more complex; 2 is 10 in binary which translates to x in finite field mathematics. The formula provide is multiplied as so when multiplying by 2: (x^8 + x^4 + x^3 + x + 1) * (x) handled by shifting the word and then checking if it's top most bit is 1. If it is 1 it is to be XOR'ed by 1b in hex. Multiplication by 3 is handled by realizing that 3 = 11 = x + 1 in finite mathematics; therefore simply multiplying by two
+and then adding the original value gives you multiplication by 3.
+
+Legal:
+Copyright (C) 2012 John B. Wyatt IV
+License: GPLv3 by the Free Software Foundation
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
